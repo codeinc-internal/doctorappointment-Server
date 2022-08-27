@@ -2,6 +2,8 @@ const {User}=require('../Model/userModel')
 const {Otp} =require('../Model/optModel')
 const {Doctor} = require('../Model/doctorModel')
 const Appointment = require('../Model/appointmentModel')
+const ePrescription = require('../Model/e-prescriptionModel')
+const Patient = require('../Model/patientModel')
 
 
 module.exports.getAllDoctor=async(req,res)=>{
@@ -103,8 +105,49 @@ module.exports.getAppointmentById= async(req,res)=>{
         res.status(200).send({
             success:true,
             
-            data:appointment
+            data:{
+                appointment
+            }
         })
+
+    } catch (error) {
+        res.status(404).json({
+            message:error,
+            success:'fail'
+        })
+    }
+}
+module.exports.e_prescription=  async(req,res)=>{
+    try {
+        const doctor = await Doctor.findOne({userId:req.user._id})
+         if(!doctor){
+            res.status(404).json({
+                message:error,
+                success:'fail'
+            })
+         }
+        const toString = String(doctor._id)
+        console.log(toString)
+          
+         const prescription = new ePrescription({...req.body,doctorId:toString,patientId:req.params.id})
+         
+         await prescription.save()
+         const patient = await Patient.findById(req.params.id)
+         const ePrescriptions = patient.ePrescriptions
+         ePrescriptions.push({
+            _id:prescription._id
+         })
+         await patient.save()
+         res.status(200).send({
+            success:true,
+            data:{
+                    prescription
+            },
+            patient:{
+                patient
+            }
+        })
+
 
     } catch (error) {
         res.status(404).json({

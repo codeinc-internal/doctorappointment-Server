@@ -179,7 +179,7 @@ module.exports.bookAppointment= async(req,res)=>{
 
         await appointment.save()
         const doctor = await Doctor.findById(req.body.doctorId)
-       const  toString = String(doctor.userId) 
+      const toString = String(doctor._id)
        const user = await User.findById(toString)
        const unseenNotification = user.unseenNotification
        unseenNotification.push({

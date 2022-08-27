@@ -16,7 +16,7 @@ const ePrescriptionSchema = new mongoose.Schema({
     },
     date:{
         type:String,
-        default:new Date.now()
+        default:new Date()
     }
 })
 const ePrescription=mongoose.model('Prescription',ePrescriptionSchema)
